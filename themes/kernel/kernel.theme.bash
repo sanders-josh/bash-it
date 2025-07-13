@@ -1,8 +1,6 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2034 # Expected behavior for themes.
 
-bashit enable alias fuck
-
 SCM_THEME_PROMPT_DIRTY=" ${red?}✗${normal}"
 SCM_THEME_PROMPT_CLEAN=" ${bold_green?}✓${normal}"
 SCM_THEME_PROMPT_PREFIX=" ${blue}"

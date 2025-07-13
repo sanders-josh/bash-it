@@ -230,6 +230,9 @@ else
 	_bash-it-profile-load "default"
 fi
 
+bashit alias enable ms-office
+bashit alias enable fuck
+
 echo ""
 echo -e "\033[0;32mInstallation finished successfully! Enjoy bash-it!\033[0m"
 # shellcheck disable=SC2086
