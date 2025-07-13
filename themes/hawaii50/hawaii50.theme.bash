@@ -58,7 +58,7 @@ REF_COLOR="${purple}"
 # SCM prompts
 SCM_THEME_PROMPT_DIRTY=" ${bold_red}✗${normal}"
 SCM_THEME_PROMPT_CLEAN=" ${bold_green}✓${normal}"
-SCM_THEME_PROMPT_PREFIX=' on '
+SCM_THEME_PROMPT_PREFIX=''
 SCM_THEME_PROMPT_SUFFIX=''
 
 # rvm prompts
@@ -79,19 +79,19 @@ MAX_PWD_LENGTH=20
 MAX_GIT_HEX_LENGTH=5
 
 # IP address
-IP_SEPARATOR=', '
+IP_SEPARATOR='${DEFAULT_COLOR},${IP_COLOR}'
 
 # FUNCS =======================================================================
 
 function get_ip_info {
 	myip=$(curl -s checkip.dyndns.org | grep -Eo '[0-9\.]+')
-	echo -e "$(ips | sed -e :a -e '$!N;s/\n/${IP_SEPARATOR}/;ta' | sed -e 's/127\.0\.0\.1\${IP_SEPARATOR}//g'), ${myip}"
+	echo -e "${IP_COLOR}$(ips | sed -e :a -e '$!N;s/\n/${IP_SEPARATOR}/;ta' | sed -e 's/127\.0\.0\.1\${IP_SEPARATOR}//g')${DEFAULT_COLOR},${IP_COLOR}${myip}"
 }
 
 # Displays ip prompt
 function ip_prompt_info() {
 	if [[ $IP_ENABLED == 1 ]]; then
-		echo -e " ${DEFAULT_COLOR}(${IP_COLOR}$(get_ip_info)${DEFAULT_COLOR})"
+		echo -e "${DEFAULT_COLOR}($(get_ip_info)${DEFAULT_COLOR})"
 	fi
 }
 
@@ -129,7 +129,7 @@ function git_prompt_info() {
 	ref=$(git symbolic-ref HEAD 2> /dev/null) || return
 	commit_id=$(git rev-parse HEAD 2> /dev/null) || return
 
-	echo -e "$prefix${REF_COLOR}${ref#refs/heads/}${DEFAULT_COLOR}:${commit_id:0:$MAX_GIT_HEX_LENGTH}$state$suffix"
+	echo -e "$prefix${blue}${ref#refs/heads/}${DEFAULT_COLOR}$state$suffix"
 }
 
 # Parse hg info
@@ -183,14 +183,24 @@ function limited_pwd() {
 
 # Displays the current prompt
 function prompt() {
-	local UC=$USER_COLOR
-	[ $UID -eq "0" ] && UC=$SUPERUSER_COLOR
+
+	PS1="${cyan}\u"
+	PS1+="${DEFAULT_COLOR}@${MACHINE_COLOR}\h"
+	PS1+="${DEFAULT_COLOR}:${DIRECTORY_COLOR}\w"
 
 	if [[ $VIRTUAL_PROMPT_ENABLED == 1 ]]; then
-		PS1="$(scm_char) ${UC}\u ${DEFAULT_COLOR}at ${MACHINE_COLOR}\h$(ip_prompt_info) ${DEFAULT_COLOR}in ${DIRECTORY_COLOR}$(limited_pwd)${DEFAULT_COLOR}$(virtual_prompt_info)$(scm_prompt_info)${reset_color} \$ "
-	else
-		PS1="$(scm_char) ${UC}\u ${DEFAULT_COLOR}at ${MACHINE_COLOR}\h$(ip_prompt_info) ${DEFAULT_COLOR}in ${DIRECTORY_COLOR}$(limited_pwd)${DEFAULT_COLOR}$(scm_prompt_info)${reset_color} \$ "
+		PS1+="$(virtual_prompt_info)"
 	fi
+
+	SCM_STR="$(scm_prompt)"
+	if [ "$SCM_STR" != '' ]; then
+		PS1+="${DEFAULT_COLOR} [${SCM_STR}${DEFAULT_COLOR}]"
+	else
+		PS1+="${DEFAULT_COLOR}"
+	fi
+
+	PS1+="$reset_color → "
+
 	PS2='> '
 	PS4='+ '
 }
