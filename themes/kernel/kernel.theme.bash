@@ -26,29 +26,47 @@ GIT_THEME_PROMPT_SUFFIX="${reset_color} "
 RVM_THEME_PROMPT_PREFIX="|"
 RVM_THEME_PROMPT_SUFFIX="|"
 
+VIRTUALENV_THEME_PROMPT_PREFIX=" ("
+VIRTUALENV_THEME_PROMPT_SUFFIX=""
+PYTHON_THEME_PROMPT_PREFIX=" | "
+PYTHON_THEME_PROMPT_SUFFIX=")"
+
 # IP address
 IP_SEPARATOR="${reset_color},${yellow}"
 
 # FUNCS =======================================================================
 
+function virtualenv_prompt() {
+	local virtualenv
+	local py_version
+	if [[ -n "${VIRTUAL_ENV:-}" ]]; then
+		virtualenv="${VIRTUAL_ENV##*/}"
+		echo -ne "${VIRTUALENV_THEME_PROMPT_PREFIX-}${virtualenv}${VIRTUALENV_THEME_PROMPT_SUFFIX-}"
+		py_version_prompt
+	fi
+}
+
+function py_version_prompt() {
+	local py_version
+	py_version="$(python --version 2>&1 | awk 'NR==1{print $2;}')" || return
+	echo -ne "${PYTHON_THEME_PROMPT_PREFIX-}${py_version}${PYTHON_THEME_PROMPT_SUFFIX-}"
+}
+
 function prompt_command() {
 	# info line
-	# • username@hostname:working_directory •
+	# • username@hostname:working_directory (venv | python-version)•
 	PS1="\n${reset_color}• " # •
 	PS1+="${cyan?}\u" # username
 	PS1+="${reset_color}@" # @
 	PS1+="${yellow}\h" # hostname
 	PS1+="${reset_color}:" # :
 	PS1+="${green}\w" # working directory
+	PS1+="${reset_color}$(virtualenv_prompt)" # virtualenv
 	PS1+="${reset_color} •" # •
 
-	# input line with scm info
-	scm_info="$(scm_prompt)"
-	if [ "$scm_info" != " " ]; then
-		PS1+=" "
-	fi
+	# input line with python and scm info
 	
-	PS1+="\n${reset_color}${scm_info}${reset_color} → "
+	PS1+="\n${reset_color}$(scm_prompt)${reset_color} → "
 }
 
 safe_append_prompt_command prompt_command
