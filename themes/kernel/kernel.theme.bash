@@ -40,9 +40,4 @@ function prompt_command() {
 	PS1+="\n${reset_color}${scm_info}${reset_color} → "
 }
 
-: "${THEME_SHOW_CLOCK_CHAR:="true"}"
-: "${THEME_CLOCK_CHAR_COLOR:=${red?}}"
-: "${THEME_CLOCK_COLOR:=${bold_cyan?}}"
-: "${THEME_CLOCK_FORMAT:="%Y-%m-%d %H:%M:%S"}"
-
 safe_append_prompt_command prompt_command
