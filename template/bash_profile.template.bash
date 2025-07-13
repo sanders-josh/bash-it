@@ -9,10 +9,12 @@ esac
 # Path to the bash it configuration
 export BASH_IT="{{BASH_IT}}"
 
+alias bashit='bash_it'
+
 # Lock and Load a custom theme file.
 # Leave empty to disable theming.
 # location "$BASH_IT"/themes/
-export BASH_IT_THEME='bobby'
+export BASH_IT_THEME='kernel'
 
 # Some themes can show whether `sudo` has a current token or not.
 # Set `$THEME_CHECK_SUDO` to `true` to check every prompt:
